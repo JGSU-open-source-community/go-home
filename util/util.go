@@ -26,7 +26,13 @@ func Stations(stationTetx []byte) map[string]string {
 	return cityMap2Code
 }
 
-var tl = make(map[string]string)
+type Station struct {
+	Train_no string
+	From     string
+	To       string
+}
+
+var tl = make(map[string]*Station)
 
 func TrainList() error {
 	bytes, err := ioutil.ReadFile("trainlist.json")
@@ -46,7 +52,18 @@ func TrainList() error {
 				for _, trains := range trainType.([]interface{}) {
 					obj := trains.(map[string]interface{})
 					stc := strings.Split(obj["station_train_code"].(string), "(")
-					tl[stc[0]] = obj["train_no"].(string)
+					cityTocity := strings.TrimSuffix(stc[1], "(")
+
+					combain := strings.Split(cityTocity, "-")
+
+					there := combain[0]
+					home := combain[1]
+
+					tl[stc[0]] = &Station{
+						Train_no: obj["train_no"].(string),
+						From:     there,
+						To:       home,
+					}
 				}
 			}
 		}
