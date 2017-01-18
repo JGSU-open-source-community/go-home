@@ -19,3 +19,14 @@ func TestTextToStations(t *testing.T) {
 		t.Log(stations)
 	}
 }
+
+func TestTrainlist(t *testing.T) {
+	err := TrainList()
+
+	if err != nil {
+		t.Log(err)
+	}
+
+	t.Log("here")
+
+}

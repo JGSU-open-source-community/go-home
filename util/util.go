@@ -1,7 +1,8 @@
 package util
 
 import (
-	// "encoding/json"
+	"encoding/json"
+	"io/ioutil"
 	"regexp"
 	"strings"
 	"time"
@@ -25,6 +26,39 @@ func Stations(stationTetx []byte) map[string]string {
 	return cityMap2Code
 }
 
-func trainList() {
+var tl = make(map[string]string)
 
+func TrainList() error {
+	bytes, err := ioutil.ReadFile("trainlist.json")
+
+	if err != nil {
+		return err
+	}
+
+	var v interface{}
+	if err := json.Unmarshal(bytes, &v); err != nil {
+		return err
+	}
+
+	if m, ok := v.(map[string]interface{}); ok {
+		for _, endDate := range m {
+			for _, trainType := range endDate.(map[string]interface{}) {
+				for _, trains := range trainType.([]interface{}) {
+					obj := trains.(map[string]interface{})
+					stc := strings.Split(obj["station_train_code"].(string), "(")
+					tl[stc[0]] = obj["train_no"].(string)
+				}
+			}
+		}
+	}
+
+	marshl, err := json.Marshal(tl)
+
+	if err != nil {
+		return err
+	}
+
+	ioutil.WriteFile("compress.data", marshl, 0644)
+
+	return nil
 }
