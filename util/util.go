@@ -47,12 +47,20 @@ func TrainList() error {
 	}
 
 	if m, ok := v.(map[string]interface{}); ok {
-		for _, endDate := range m {
+		for k, endDate := range m {
+			if endDate == nil {
+				continue
+			}
+
+			if !compare("2017-01-28", k) {
+				continue
+			}
+
 			for _, trainType := range endDate.(map[string]interface{}) {
 				for _, trains := range trainType.([]interface{}) {
 					obj := trains.(map[string]interface{})
 					stc := strings.Split(obj["station_train_code"].(string), "(")
-					cityTocity := strings.TrimSuffix(stc[1], "(")
+					cityTocity := strings.TrimSuffix(stc[1], ")")
 
 					combain := strings.Split(cityTocity, "-")
 
@@ -78,4 +86,14 @@ func TrainList() error {
 	ioutil.WriteFile("compress.data", marshl, 0644)
 
 	return nil
+}
+
+func compare(t1, t2 string) bool {
+	time1, _ := time.Parse("2006-01-02", t1)
+	time2, _ := time.Parse("2006-01-02", t2)
+
+	if time1.After(time2) {
+		return true
+	}
+	return false
 }

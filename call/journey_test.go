@@ -5,7 +5,7 @@ import (
 )
 
 func TestCall(t *testing.T) {
-	datas := Call()
+	datas := Call("G4775")
 
 	t.Log(string(datas))
 }
