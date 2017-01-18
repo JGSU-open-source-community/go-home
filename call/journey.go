@@ -14,8 +14,9 @@ import (
 
 func Call(train string) (datas []byte) {
 
-	tr := &http.Transport{TLSClientConfig: &tls.Config{InsecureSkipVerify: true}}
-
+	tr := &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
+	}
 	client := &http.Client{Transport: tr}
 
 	var v interface{}
@@ -48,7 +49,9 @@ func Call(train string) (datas []byte) {
 	fmt.Println(to)
 	date := util.FomatNowDate()
 
-	url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo\\?train_no\\=%s\\&from_station_telecode\\=%s\\&to_station_telecode\\=%s\\&depart_date\\=%s", no, from, to, date)
+	url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, from, to, date)
+
+	fmt.Println(url)
 
 	resp, err := client.Get(url)
 
@@ -60,8 +63,6 @@ func Call(train string) (datas []byte) {
 	defer resp.Body.Close()
 
 	datas, err = ioutil.ReadAll(resp.Body)
-
-	fmt.Println(string(datas))
 
 	if err != nil {
 		log.Fatal(err)
