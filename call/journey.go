@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
@@ -26,7 +27,11 @@ func call(train string) (datas []byte) {
 
 	var v interface{}
 
-	f, err := ioutil.ReadFile("util/compress.data")
+	execFileRelativePath, _ := exec.LookPath(os.Args[0])
+
+	newexecFileRelativePath := strings.Replace(execFileRelativePath, "bin", "src", 1)
+
+	f, err := ioutil.ReadFile(newexecFileRelativePath + "/util/compress.data")
 
 	if err != nil {
 		log.Fatal(err)
