@@ -8,11 +8,16 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
+
+	"github.com/olekukonko/tablewriter"
 
 	"go-home/util"
 )
 
-func Call(train string) (datas []byte) {
+func call(train string) (datas []byte) {
+
+	train = strings.ToUpper(train)
 
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
@@ -21,7 +26,7 @@ func Call(train string) (datas []byte) {
 
 	var v interface{}
 
-	f, err := ioutil.ReadFile("../util/compress.data")
+	f, err := ioutil.ReadFile("util/compress.data")
 
 	if err != nil {
 		log.Fatal(err)
@@ -41,36 +46,72 @@ func Call(train string) (datas []byte) {
 
 	cityMapToCode := util.Stations([]byte(text))
 
-	combain := compress[train].(map[string]interface{})
+	if combain, ok := compress[train].(map[string]interface{}); !ok {
+		fmt.Println("请输入正确的车次信息！")
+		return nil
+	} else {
+		no := combain["Train_no"].(string)
+		from := cityMapToCode[combain["From"].(string)]
+		to := cityMapToCode[combain["To"].(string)]
+		date := util.FomatNowDate()
 
-	no := combain["Train_no"].(string)
-	from := cityMapToCode[combain["From"].(string)]
-	to := cityMapToCode[combain["To"].(string)]
-	fmt.Println(to)
-	date := util.FomatNowDate()
+		url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, from, to, date)
 
-	url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, from, to, date)
+		resp, err := client.Get(url)
 
-	fmt.Println(url)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(2)
+		}
 
-	resp, err := client.Get(url)
+		defer resp.Body.Close()
 
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(2)
-	}
+		datas, err = ioutil.ReadAll(resp.Body)
 
-	defer resp.Body.Close()
-
-	datas, err = ioutil.ReadAll(resp.Body)
-
-	if err != nil {
-		log.Fatal(err)
-		os.Exit(2)
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(2)
+		}
 	}
 	return datas
 }
 
-func CallAllStation() {
+func Start(train string) {
+	data := call(train)
 
+	if data == nil {
+		return
+	}
+
+	var v interface{}
+	if err := json.Unmarshal(data, &v); err != nil {
+		log.Fatal(err)
+		os.Exit(2)
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"站序", "站名", "到站时间", "出站时间", "停留时间"})
+
+	if m, ok := v.(map[string]interface{}); ok {
+		if m["httpstatus"].(float64) == 200 {
+			if subdata, ok := m["data"].(map[string]interface{}); ok {
+				if elements, ok := subdata["data"].([]interface{}); ok {
+					for _, vv := range elements {
+						element := vv.(map[string]interface{})
+						station_no := element["station_no"].(string)
+						station_name := element["station_name"].(string)
+						arrive_time := element["arrive_time"].(string)
+						start_time := element["start_time"].(string)
+						stopover_time := element["stopover_time"].(string)
+						row := []string{station_no, station_name, arrive_time, start_time, stopover_time}
+						table.Append(row)
+					}
+				}
+			}
+		} else {
+			log.Fatal("invalid message!")
+			return
+		}
+	}
+	table.Render()
 }
