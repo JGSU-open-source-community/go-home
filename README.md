@@ -19,3 +19,10 @@ you should download project to path of yourself and then go build or go install,
 go build 
 go-home your train number (em: G4474)
 ```
+###Contact
+
+Wechat: convertxy
+
+QQ: 2698380951
+
+Email: aliasliyu4@gamil.com
