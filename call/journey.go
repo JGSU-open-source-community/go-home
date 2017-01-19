@@ -29,9 +29,16 @@ func call(train string) (datas []byte) {
 
 	execFileRelativePath, _ := exec.LookPath(os.Args[0])
 
-	newexecFileRelativePath := strings.Replace(execFileRelativePath, "bin", "src", 1)
+	var newexecFileRelativePath string
 
-	f, err := ioutil.ReadFile(newexecFileRelativePath + "/util/compress.data")
+	if !strings.Contains(execFileRelativePath, "./") {
+		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src", 1)
+		newexecFileRelativePath = newexecFileRelativePath + "/util/compress.data"
+	} else {
+		newexecFileRelativePath = "util/compress.data"
+	}
+
+	f, err := ioutil.ReadFile(newexecFileRelativePath)
 
 	if err != nil {
 		log.Fatal(err)
