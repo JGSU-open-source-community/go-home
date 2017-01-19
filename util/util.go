@@ -34,6 +34,7 @@ type Station struct {
 
 var tl = make(map[string]*Station)
 
+// Update
 func TrainList() error {
 	bytes, err := ioutil.ReadFile("trainlist.json")
 
