@@ -1,10 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"os"
+
+	"go-home/call"
 	_ "go-home/help"
 )
 
 func main() {
-	fmt.Println("go home")
+	args := os.Args
+
+	if len(args) >= 2 {
+		call.Start(args[1])
+	}
 }
