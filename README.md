@@ -2,7 +2,7 @@
 
 
 ###output
-![](http://i1.piimg.com/524586/559e01a730c4e0ae.gif)
+![](http://www.z4a.net/image/wTPo0)
 
 
 ###dependence
