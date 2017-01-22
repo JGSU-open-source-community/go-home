@@ -2,7 +2,7 @@
 
 
 ###output
-![](http://i1.piimg.com/567571/dec257a424663ab9.gif)
+![] (http://p1.bpimg.com/524586/107c14089f4abdc0.gif)
 
 ###dependence
 ASCLL TABLE Writer it is for generate ascii table on termial
@@ -19,6 +19,14 @@ you should download project to path of yourself and then go build or go install,
 go build 
 go-home your train number (em: G4474)
 ```
+
+###log
+
+1. Add depart date parameter when query train schedule.
+If you use a command like **go-home k502**, default value is tody,
+so above command equal **go-home k502 2017-01-22**
+In fact you should use a command like **go-home k502 2017-01-23** to query someday's plan that you want to know. 
+
 ###Contact
 
 Wechat: convertxy
