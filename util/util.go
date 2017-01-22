@@ -32,7 +32,7 @@ type Station struct {
 	To       string
 }
 
-var tl = make(map[string]*Station)
+var All = make(map[string]map[string]*Station)
 
 // Update
 func TrainList() error {
@@ -53,9 +53,7 @@ func TrainList() error {
 				continue
 			}
 
-			if !compare("2017-01-28", k) {
-				continue
-			}
+			var oneday = make(map[string]*Station)
 
 			for _, trainType := range endDate.(map[string]interface{}) {
 				for _, trains := range trainType.([]interface{}) {
@@ -68,17 +66,19 @@ func TrainList() error {
 					there := combain[0]
 					home := combain[1]
 
-					tl[stc[0]] = &Station{
+					oneday[stc[0]] = &Station{
 						Train_no: obj["train_no"].(string),
 						From:     there,
 						To:       home,
 					}
 				}
 			}
+
+			All[k] = oneday
 		}
 	}
 
-	marshl, err := json.Marshal(tl)
+	marshl, err := json.Marshal(All)
 
 	if err != nil {
 		return err
