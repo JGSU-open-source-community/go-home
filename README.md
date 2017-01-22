@@ -2,7 +2,7 @@
 
 
 ###output
-![](http://www.z4a.net/image/wTPo0)
+![11.gif](https://ooo.0o0.ooo/2017/01/22/5884535ec76c2.gif)
 
 
 ###dependence
