@@ -2,7 +2,8 @@
 
 
 ###output
-![] (http://i1.piimg.com/524586/559e01a730c4e0ae.gif)
+![](http://i1.piimg.com/524586/559e01a730c4e0ae.gif)
+
 
 ###dependence
 ASCLL TABLE Writer it is for generate ascii table on termial
