@@ -14,6 +14,12 @@ import (
 // 	t.Log(string(datas))
 // }
 
+const (
+	start = "\x1b[91m(始)\x1b[0m"
+	pass  = "\x1b[93m(过)\x1b[0m"
+	end   = "\x1b[92m(终)\x1b[0m"
+)
+
 func TestShowLeftTricket(t *testing.T) {
 	table := tablewriter.NewWriter(os.Stdout)
 
@@ -29,7 +35,7 @@ func TestShowLeftTricket(t *testing.T) {
 		t.Fatal(err)
 	}
 
-	table.SetHeader([]string{"车次", "出发站", "到达站", "出发时间", "到达时间", "商务座", "特等座", "一等座", "二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他"})
+	table.SetHeader([]string{"车次", "出发站", "到达站", "出发时间", "到达时间", "历时", "商务座", "特等座", "一等座", "二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他"})
 	if m, ok := v.(map[string]interface{}); ok {
 		if m["httpstatus"].(float64) == 200 {
 			if data, ok := m["data"].([]interface{}); ok {
@@ -38,16 +44,37 @@ func TestShowLeftTricket(t *testing.T) {
 						raw := ql["queryLeftNewDTO"]
 						detail := raw.(map[string]interface{})
 
+						// 始发站
+						start_station_name := detail["start_station_name"]
+						// 终点站
+						end_station_name := detail["end_station_name"]
+
 						// 车次
 						station_train_code := detail["station_train_code"].(string)
 						// 出发站
 						from_station_name := detail["from_station_name"].(string)
+
 						// 到达站
 						to_station_name := detail["to_station_name"].(string)
 						// 出发时间
+
+						if start_station_name == from_station_name {
+							from_station_name = start + from_station_name
+						} else {
+							from_station_name = pass + from_station_name
+						}
+
+						if end_station_name == to_station_name {
+							to_station_name = end + to_station_name
+						} else {
+							to_station_name = pass + to_station_name
+						}
+
 						satrt_time := detail["start_time"].(string)
 						// 到达时间
 						arrive_time := detail["arrive_time"].(string)
+						// 历时
+						lishi := detail["lishi"].(string)
 						// 商务座
 						swz_nun := detail["swz_num"].(string)
 						// 特等座
@@ -77,6 +104,7 @@ func TestShowLeftTricket(t *testing.T) {
 							to_station_name,
 							satrt_time,
 							arrive_time,
+							lishi,
 							swz_nun,
 							tz_num,
 							zy_num,
@@ -99,5 +127,4 @@ func TestShowLeftTricket(t *testing.T) {
 		}
 	}
 	table.Render()
-
 }
