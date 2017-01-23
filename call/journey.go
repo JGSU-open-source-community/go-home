@@ -16,7 +16,7 @@ import (
 	"go-home/util"
 )
 
-func call(train, date string) (datas []byte) {
+func schedule(train, date string) (datas []byte) {
 
 	train = strings.ToUpper(train)
 
@@ -88,8 +88,14 @@ func call(train, date string) (datas []byte) {
 	return datas
 }
 
-func Start(train, date string) {
-	data := call(train, date)
+// query left ticket in 12306
+// https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2017-01-23&leftTicketDTO.from_station=SHH&leftTicketDTO.to_station=NCG&purpose_codes=ADULT
+func leftTicket() {
+
+}
+
+func ShowSchedule(train, date string) {
+	data := schedule(train, date)
 
 	if data == nil {
 		return

@@ -14,9 +14,9 @@ func main() {
 
 	if len(args) >= 2 {
 		if len(args) == 3 {
-			call.Start(args[1], args[2])
+			call.ShowSchedule(args[1], args[2])
 		} else {
-			call.Start(args[1], date)
+			call.ShowSchedule(args[1], date)
 		}
 	}
 }
