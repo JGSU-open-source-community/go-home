@@ -3,6 +3,7 @@ package call
 import (
 	"crypto/tls"
 	"encoding/json"
+	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -25,6 +26,55 @@ const (
 	pass  = "\x1b[93m(过)\x1b[0m"
 	end   = "\x1b[92m(终)\x1b[0m"
 )
+
+type Command struct {
+	UsageLine string
+	Run       func(cmd *Command, args []string) int
+
+	// Flag is a set of flags specific to this command.
+	Flag flag.FlagSet
+}
+
+func (c *Command) Name() string {
+	name := c.UsageLine
+	i := strings.Index(name, " ")
+	if i >= 0 {
+		name = name[:i]
+	}
+	return name
+}
+
+var (
+	cmdSchedule = &Command{
+		UsageLine: "trainschedule",
+	}
+
+	cmdLeftTricket = &Command{
+		UsageLine: "lefttricket",
+	}
+
+	Commands = []*Command{
+		cmdSchedule,
+		cmdLeftTricket,
+	}
+
+	Train string
+	Date1 string
+	Date2 string
+	From  string
+	To    string
+)
+
+func init() {
+	cmdSchedule.Run = ShowSchedule
+	cmdSchedule.Flag.StringVar(&Train, "train", "", "the train number is your will seat")
+	cmdSchedule.Flag.StringVar(&Date1, "date1", "", "special depart date when you query train schedule")
+
+	cmdLeftTricket.Run = ShowLeftTrcket
+	cmdLeftTricket.Flag.StringVar(&From, "from", "", "start station")
+	cmdLeftTricket.Flag.StringVar(&To, "to", "", "arrive station")
+	cmdSchedule.Flag.StringVar(&Date2, "date2", "", "special depart date when you query left tricket")
+}
 
 var cityMapToCode = util.Stations([]byte(text))
 
@@ -94,12 +144,53 @@ func schedule(train, date string) (datas []byte) {
 	return datas
 }
 
+func ShowSchedule(cmd *Command, args []string) int {
+	data := schedule(args[0], args[1])
+
+	if data == nil {
+		return 2
+	}
+
+	var v interface{}
+	if err := json.Unmarshal(data, &v); err != nil {
+		log.Fatal(err)
+		return 2
+	}
+
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"站序", "站名", "到站时间", "出站时间", "停留时间"})
+
+	if m, ok := v.(map[string]interface{}); ok {
+		if m["httpstatus"].(float64) == 200 {
+			if subdata, ok := m["data"].(map[string]interface{}); ok {
+				if elements, ok := subdata["data"].([]interface{}); ok {
+					for _, vv := range elements {
+						element := vv.(map[string]interface{})
+						station_no := element["station_no"].(string)
+						station_name := element["station_name"].(string)
+						arrive_time := element["arrive_time"].(string)
+						start_time := element["start_time"].(string)
+						stopover_time := element["stopover_time"].(string)
+						row := []string{station_no, station_name, arrive_time, start_time, stopover_time}
+						table.Append(row)
+					}
+				}
+			}
+		} else {
+			log.Fatal("invalid train schedule message!")
+			return 2
+		}
+	}
+	table.Render()
+	return 1
+}
+
 // query left ticket in 12306
 // form start city
 // to arrive city
-// https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2017-01-23&leftTicketDTO.from_station=SHH&leftTicketDTO.to_station=NCG&purpose_codes=ADULT
 func leftTicket(from, to string) []byte {
 	date := util.FomatNowDate()
+	date = "2017-01-24"
 
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
@@ -129,14 +220,14 @@ func leftTicket(from, to string) []byte {
 	return body
 }
 
-func showLeftTrcket(from, to string) {
-	leftTicketDatas := leftTicket(from, to)
+func ShowLeftTrcket(cmd *Command, args []string) int {
+	leftTicketDatas := leftTicket(args[0], args[1])
 
 	var v interface{}
 
 	if err := json.Unmarshal(leftTicketDatas, &v); err != nil {
 		log.Fatal(err)
-		os.Exit(2)
+		return 2
 	}
 
 	// new table redict to terminal
@@ -151,9 +242,9 @@ func showLeftTrcket(from, to string) {
 						detail := raw.(map[string]interface{})
 
 						// 始发站
-						start_station_name := detail["start_station_name"]
+						start_station_name := detail["start_station_name"].(string)
 						// 终点站
-						end_station_name := detail["end_station_name"]
+						end_station_name := detail["end_station_name"].(string)
 
 						// 车次
 						station_train_code := detail["station_train_code"].(string)
@@ -205,8 +296,8 @@ func showLeftTrcket(from, to string) {
 						qt_num := detail["qt_num"].(string)
 
 						row := []string{
+							station_train_code,
 							from_station_name,
-							start_station_name,
 							to_station_name,
 							satrt_time,
 							arrive_time,
@@ -229,48 +320,9 @@ func showLeftTrcket(from, to string) {
 			}
 		} else {
 			log.Fatal("invalid left tricket message!")
-			return
+			return 2
 		}
 	}
 	table.Render()
-}
-
-func ShowSchedule(train, date string) {
-	data := schedule(train, date)
-
-	if data == nil {
-		return
-	}
-
-	var v interface{}
-	if err := json.Unmarshal(data, &v); err != nil {
-		log.Fatal(err)
-		os.Exit(2)
-	}
-
-	table := tablewriter.NewWriter(os.Stdout)
-	table.SetHeader([]string{"站序", "站名", "到站时间", "出站时间", "停留时间"})
-
-	if m, ok := v.(map[string]interface{}); ok {
-		if m["httpstatus"].(float64) == 200 {
-			if subdata, ok := m["data"].(map[string]interface{}); ok {
-				if elements, ok := subdata["data"].([]interface{}); ok {
-					for _, vv := range elements {
-						element := vv.(map[string]interface{})
-						station_no := element["station_no"].(string)
-						station_name := element["station_name"].(string)
-						arrive_time := element["arrive_time"].(string)
-						start_time := element["start_time"].(string)
-						stopover_time := element["stopover_time"].(string)
-						row := []string{station_no, station_name, arrive_time, start_time, stopover_time}
-						table.Append(row)
-					}
-				}
-			}
-		} else {
-			log.Fatal("invalid train schedule message!")
-			return
-		}
-	}
-	table.Render()
+	return 1
 }

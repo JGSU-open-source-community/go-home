@@ -14,11 +14,11 @@ import (
 // 	t.Log(string(datas))
 // }
 
-const (
-	start = "\x1b[91m(始)\x1b[0m"
-	pass  = "\x1b[93m(过)\x1b[0m"
-	end   = "\x1b[92m(终)\x1b[0m"
-)
+// const (
+// 	start = "\x1b[91m(始)\x1b[0m"
+// 	pass  = "\x1b[93m(过)\x1b[0m"
+// 	end   = "\x1b[92m(终)\x1b[0m"
+// )
 
 func TestShowLeftTricket(t *testing.T) {
 	table := tablewriter.NewWriter(os.Stdout)
@@ -46,8 +46,8 @@ func TestShowLeftTricket(t *testing.T) {
 
 						// 始发站
 						start_station_name := detail["start_station_name"]
-						// 终点站
 						end_station_name := detail["end_station_name"]
+						// 终点站
 
 						// 车次
 						station_train_code := detail["station_train_code"].(string)
@@ -69,7 +69,6 @@ func TestShowLeftTricket(t *testing.T) {
 						} else {
 							to_station_name = pass + to_station_name
 						}
-
 						satrt_time := detail["start_time"].(string)
 						// 到达时间
 						arrive_time := detail["arrive_time"].(string)
