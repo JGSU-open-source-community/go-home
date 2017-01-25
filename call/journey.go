@@ -37,25 +37,21 @@ type Command struct {
 
 func (c *Command) Name() string {
 	name := c.UsageLine
-	i := strings.Index(name, " ")
-	if i >= 0 {
-		name = name[:i]
-	}
 	return name
 }
 
 var (
 	cmdSchedule = &Command{
-		UsageLine: "trainschedule",
+		UsageLine: "train",
 	}
 
 	cmdLeftTricket = &Command{
-		UsageLine: "lefttricket",
+		UsageLine: "left",
 	}
 
 	Commands = []*Command{
-		cmdSchedule,
 		cmdLeftTricket,
+		cmdSchedule,
 	}
 
 	Train string
@@ -71,9 +67,9 @@ func init() {
 	cmdSchedule.Flag.StringVar(&Date1, "date1", "", "special depart date when you query train schedule")
 
 	cmdLeftTricket.Run = ShowLeftTrcket
-	cmdLeftTricket.Flag.StringVar(&From, "from", "", "start station")
+	cmdLeftTricket.Flag.StringVar(&Date2, "date2", "", "special depart date when you query left tricket")
 	cmdLeftTricket.Flag.StringVar(&To, "to", "", "arrive station")
-	cmdSchedule.Flag.StringVar(&Date2, "date2", "", "special depart date when you query left tricket")
+	cmdLeftTricket.Flag.StringVar(&From, "from", "", "start station")
 }
 
 var cityMapToCode = util.Stations([]byte(text))
@@ -188,9 +184,7 @@ func ShowSchedule(cmd *Command, args []string) int {
 // query left ticket in 12306
 // form start city
 // to arrive city
-func leftTicket(from, to string) []byte {
-	date := util.FomatNowDate()
-	date = "2017-01-24"
+func leftTicket(from, to, date string) []byte {
 
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
@@ -221,7 +215,7 @@ func leftTicket(from, to string) []byte {
 }
 
 func ShowLeftTrcket(cmd *Command, args []string) int {
-	leftTicketDatas := leftTicket(args[0], args[1])
+	leftTicketDatas := leftTicket(args[0], args[1], args[2])
 
 	var v interface{}
 

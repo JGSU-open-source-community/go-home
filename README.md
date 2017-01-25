@@ -2,11 +2,11 @@
 
 
 ###output(train schedule)
-![11.gif](https://ooo.0o0.ooo/2017/01/22/5884535ec76c2.gif)
+![](http://p1.bqimg.com/567571/21b3d09e27e01ec1.gif)
 
 
 ###output(left tricket)
-![](http://p1.bqimg.com/567571/7963013fb12095e5.gif)
+![](http://p1.bpimg.com/567571/bd4a89e17aa0bde0.gif)
 
 ###dependence
 ASCLL TABLE Writer it is for generate ascii table on termial
