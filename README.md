@@ -1,9 +1,12 @@
 #Querys train schedule use the origin command line tools
 
 
-###output
+###output(train schedule)
 ![11.gif](https://ooo.0o0.ooo/2017/01/22/5884535ec76c2.gif)
 
+
+###output(left tricket)
+![](http://p1.bqimg.com/567571/7963013fb12095e5.gif)
 
 ###dependence
 ASCLL TABLE Writer it is for generate ascii table on termial
