@@ -27,9 +27,9 @@ go-home your train number (em: G4474)
 ###log
 
 1. Add depart date parameter when query train schedule.
-If you use a command like **go-home k502**, default value is tody,
+If you use a command like **go-home train k502 2017-01-22**, default value is tody,
 so above command equal **go-home k502 2017-01-22**
-In fact you should use a command like **go-home k502 2017-01-23** to query someday's plan that you want to know. 
+In fact you should use a command like **go-home train k502 2017-01-27** to query someday's plan that you want to know. 
 2. Support query left tricket go througth api of 12306 
 ###Contact
 
