@@ -31,6 +31,8 @@ If you use a command like **go-home train k502 2017-01-22**, default value is to
 so above command equal **go-home k502 2017-01-22**
 In fact you should use a command like **go-home train k502 2017-01-27** to query someday's plan that you want to know. 
 2. Support query left tricket go througth api of 12306 
+
+
 ###Contact
 
 Wechat: convertxy
