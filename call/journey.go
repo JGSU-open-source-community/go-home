@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 
 	"github.com/olekukonko/tablewriter"
@@ -35,7 +36,7 @@ func newClient() *http.Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
- 	return &http.Client{Transport: tr}
+	return &http.Client{Transport: tr}
 }
 
 // get city map to code
@@ -114,14 +115,26 @@ func schedule(train, date string) (datas []byte) {
 
 	execFileRelativePath, _ := exec.LookPath(os.Args[0])
 
+	fmt.Println(execFileRelativePath)
+
 	var newexecFileRelativePath string
 
-	if !strings.Contains(execFileRelativePath, "./") {
+	if runtime.GOOS == "windows" {
+		execFileRelativePath = strings.TrimSuffix(execFileRelativePath, ".exe")
 		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src", 1)
-		newexecFileRelativePath = newexecFileRelativePath + "/compress.data"
+		newexecFileRelativePath = newexecFileRelativePath + "\\compress.data"
 	} else {
-		newexecFileRelativePath = "compress.data"
+
+		if !strings.Contains(execFileRelativePath, "./") {
+			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src", 1)
+			newexecFileRelativePath = newexecFileRelativePath + "/compress.data"
+		} else {
+			newexecFileRelativePath = "compress.data"
+		}
+
 	}
+
+	fmt.Println(newexecFileRelativePath)
 
 	f, err := ioutil.ReadFile(newexecFileRelativePath)
 
