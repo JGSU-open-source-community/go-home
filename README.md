@@ -23,7 +23,8 @@ go get  github.com/olekukonko/tablewriter
 you should download project to path of yourself and then go build or go install, after that just run it!
 
 ```
-go build 
+cd yourpath/go-home
+go install
 go-home your train number (em: G4474) date (em:2017-02-06)
 ```
 
