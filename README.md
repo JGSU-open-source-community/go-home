@@ -24,7 +24,7 @@ you should download project to path of yourself and then go build or go install,
 
 ```
 go build 
-go-home your train number (em: G4474)
+go-home your train number (em: G4474) date (em:2017-02-06)
 ```
 
 ###log
