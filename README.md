@@ -14,16 +14,20 @@
 ###dependence
 ASCLL TABLE Writer it is for generate ascii table on termial
 and use below command to install
+color support for windows
 
 ```
 go get  github.com/olekukonko/tablewriter
+go get github.com/fatih/color
 ```
 
 ###How to get started?
 you should download project to path of yourself and then go build or go install, after that just run it!
 
 ```
-cd yourpath/go-home
+cd yourpath/src
+git clone https://github.com/JingDa-open-source-community/go-home
+cd go-home
 go install
 go-home your train number (em: G4474) date (em:2017-02-06)
 ```
