@@ -13,15 +13,16 @@ import (
 	"runtime"
 	"strings"
 
+	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
 
 	"go-home/util"
 )
 
 const (
-	start = "\x1b[91m(始)\x1b[0m"
-	pass  = "\x1b[93m(过)\x1b[0m"
-	end   = "\x1b[92m(终)\x1b[0m"
+	start = "(始)"
+	pass  = "(过)"
+	end   = "(终)"
 )
 
 type Command struct {
@@ -87,6 +88,10 @@ var (
 	From   string
 	To     string
 	Update string
+
+	highlightred    = color.New(color.FgRed).SprintFunc()    //start
+	highlightyellow = color.New(color.FgYellow).SprintFunc() //pass
+	highlightgreen  = color.New(color.FgGreen).SprintFunc()  //end
 )
 
 func init() {
@@ -286,15 +291,15 @@ func ShowLeftTrcket(cmd *Command, args []string) int {
 						to_station_name := detail["to_station_name"].(string)
 
 						if start_station_name == from_station_name {
-							from_station_name = start + from_station_name
+							from_station_name = highlightred(start) + from_station_name
 						} else {
-							from_station_name = pass + from_station_name
+							from_station_name = highlightyellow(pass) + from_station_name
 						}
 
 						if end_station_name == to_station_name {
-							to_station_name = end + to_station_name
+							to_station_name = highlightgreen(end) + to_station_name
 						} else {
-							to_station_name = pass + to_station_name
+							to_station_name = highlightyellow(pass) + to_station_name
 						}
 
 						// 出发时间
