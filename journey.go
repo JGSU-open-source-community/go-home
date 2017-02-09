@@ -17,9 +17,10 @@ import (
 )
 
 const (
-	start = "\x1b[93m(始)\x1b[0m"
-	pass  = "\x1b[91m(过)\x1b[0m"
-	end   = "\x1b[92m(终)\x1b[0m"
+	start   = "\x1b[93m(始)\x1b[0m"
+	pass    = "\x1b[91m(过)\x1b[0m"
+	end     = "\x1b[92m(终)\x1b[0m"
+	newpath = "/src/gitub.com/JingDa-open-source-community"
 )
 
 type Command struct {
@@ -117,12 +118,12 @@ func schedule(train, date string) (datas []byte) {
 
 	if runtime.GOOS == "windows" {
 		execFileRelativePath = strings.TrimSuffix(execFileRelativePath, ".exe")
-		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src/github.com", 1)
+		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", newpath, 1)
 		newexecFileRelativePath = newexecFileRelativePath + "\\compress.data"
 	} else {
 
 		if !strings.Contains(execFileRelativePath, "./") {
-			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src/github.com", 1)
+			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", newpath, 1)
 			fmt.Println(newexecFileRelativePath)
 			newexecFileRelativePath = newexecFileRelativePath + "/compress.data"
 		} else {
