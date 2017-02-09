@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/tablewriter"
+	"github.com/liyu4/tablewriter"
 
 	"go-home/util"
 )
