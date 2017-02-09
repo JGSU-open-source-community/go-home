@@ -1,4 +1,4 @@
-package call
+package main
 
 import (
 	"crypto/tls"
@@ -13,16 +13,13 @@ import (
 	"runtime"
 	"strings"
 
-	"github.com/fatih/color"
 	"github.com/liyu4/tablewriter"
-
-	"github.com/go-home/util"
 )
 
 const (
-	start = "(始)"
-	pass  = "(过)"
-	end   = "(终)"
+	start = "\x1b[93m(始)\x1b[0m"
+	pass  = "\x1b[91m(过)\x1b[0m"
+	end   = "\x1b[92m(终)\x1b[0m"
 )
 
 type Command struct {
@@ -88,10 +85,6 @@ var (
 	From   string
 	To     string
 	Update string
-
-	highlightred    = color.New(color.FgRed).SprintFunc()    //start
-	highlightyellow = color.New(color.FgYellow).SprintFunc() //pass
-	highlightgreen  = color.New(color.FgGreen).SprintFunc()  //end
 )
 
 func init() {
@@ -108,7 +101,7 @@ func init() {
 	cmdUpdate.Flag.StringVar(&Update, "update", "", "update basic data")
 }
 
-var cityMapToCode = util.Stations(stationName())
+var cityMapToCode = Stations(stationName())
 
 func schedule(train, date string) (datas []byte) {
 
@@ -120,26 +113,23 @@ func schedule(train, date string) (datas []byte) {
 
 	execFileRelativePath, _ := exec.LookPath(os.Args[0])
 
-	fmt.Println(execFileRelativePath)
-
 	var newexecFileRelativePath string
 
 	if runtime.GOOS == "windows" {
 		execFileRelativePath = strings.TrimSuffix(execFileRelativePath, ".exe")
-		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src", 1)
+		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src/github.com", 1)
 		newexecFileRelativePath = newexecFileRelativePath + "\\compress.data"
 	} else {
 
 		if !strings.Contains(execFileRelativePath, "./") {
-			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src", 1)
+			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", "src/github.com", 1)
+			fmt.Println(newexecFileRelativePath)
 			newexecFileRelativePath = newexecFileRelativePath + "/compress.data"
 		} else {
 			newexecFileRelativePath = "compress.data"
 		}
 
 	}
-
-	fmt.Println(newexecFileRelativePath)
 
 	f, err := ioutil.ReadFile(newexecFileRelativePath)
 
@@ -291,15 +281,15 @@ func ShowLeftTicket(cmd *Command, args []string) int {
 						to_station_name := detail["to_station_name"].(string)
 
 						if start_station_name == from_station_name {
-							from_station_name = highlightred(start) + from_station_name
+							from_station_name = start + from_station_name
 						} else {
-							from_station_name = highlightyellow(pass) + from_station_name
+							from_station_name = pass + from_station_name
 						}
 
 						if end_station_name == to_station_name {
-							to_station_name = highlightgreen(end) + to_station_name
+							to_station_name = end + to_station_name
 						} else {
-							to_station_name = highlightyellow(pass) + to_station_name
+							to_station_name = pass + to_station_name
 						}
 
 						// 出发时间

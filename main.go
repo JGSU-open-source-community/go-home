@@ -2,12 +2,10 @@ package main
 
 import (
 	"os"
-
-	"github.com/go-home/call"
 )
 
 func main() {
-	commands := call.Commands
+	commands := Commands
 	args := os.Args
 
 	for _, cmd := range commands {

@@ -1,11 +1,12 @@
-package call
+package main
 
 import (
 	"encoding/json"
-	"github.com/olekukonko/tablewriter"
 	"io/ioutil"
 	"os"
 	"testing"
+
+	"github.com/olekukonko/tablewriter"
 )
 
 // func TestCall(t *testing.T) {
@@ -16,8 +17,7 @@ import (
 
 // const (
 // 	start = "\x1b[91m(始)\x1b[0m"
-// 	pass  = "\x1b[93m(过)\x1b[0m"
-// 	end   = "\x1b[92m(终)\x1b[0m"
+// 	pass  = "\x1b[93m(过)\x1b[0m"// 	end   = "\x1b[92m(终)\x1b[0m"
 // )
 
 func TestShowLeftTricket(t *testing.T) {

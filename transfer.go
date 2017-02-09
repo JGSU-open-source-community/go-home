@@ -1,5 +1,5 @@
 //call implement of transfer ticket query
-package call
+package main
 
 import ()
 
