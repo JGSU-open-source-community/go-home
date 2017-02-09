@@ -20,7 +20,7 @@ const (
 	start   = "\x1b[93m(始)\x1b[0m"
 	pass    = "\x1b[91m(过)\x1b[0m"
 	end     = "\x1b[92m(终)\x1b[0m"
-	newpath = "/src/gitub.com/JingDa-open-source-community"
+	newpath = "/src/github.com/JingDa-open-source-community"
 )
 
 type Command struct {
@@ -124,7 +124,6 @@ func schedule(train, date string) (datas []byte) {
 
 		if !strings.Contains(execFileRelativePath, "./") {
 			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", newpath, 1)
-			fmt.Println(newexecFileRelativePath)
 			newexecFileRelativePath = newexecFileRelativePath + "/compress.data"
 		} else {
 			newexecFileRelativePath = "compress.data"
