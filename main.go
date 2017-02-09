@@ -1,8 +1,9 @@
 package main
 
 import (
-	"go-home/call"
 	"os"
+
+	"github.com/go-home/call"
 )
 
 func main() {

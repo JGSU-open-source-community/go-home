@@ -16,7 +16,7 @@ import (
 	"github.com/fatih/color"
 	"github.com/liyu4/tablewriter"
 
-	"go-home/util"
+	"github.com/go-home/util"
 )
 
 const (
