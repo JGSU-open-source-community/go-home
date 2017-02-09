@@ -12,24 +12,16 @@
 ![](http://i1.piimg.com/567571/ad64c6ff02bbca8b.gif)
 
 ###dependence
-ASCLL TABLE Writer it is for generate ascii table on termial
+1. ASCLL TABLE Writer it is for generate ascii table on termial
 and use below command to install
-color support for windows
 
-```
-go get  github.com/olekukonko/tablewriter
-go get github.com/fatih/color
-```
+
 
 ###How to get started?
 you should download project to path of yourself and then go build or go install, after that just run it!
 
 ```
-cd yourpath/src
-git clone https://github.com/JingDa-open-source-community/go-home
-cd go-home
-go install
-go-home your train number (em: G4474) date (em:2017-02-06)
+go get github.com/JingDa-open-source-community/go-home
 ```
 
 ###log
