@@ -14,7 +14,7 @@ import (
 	"strings"
 
 	"github.com/fatih/color"
-	"github.com/olekukonko/tablewriter"
+	"github.com/tablewriter"
 
 	"go-home/util"
 )
@@ -198,7 +198,7 @@ func ShowSchedule(cmd *Command, args []string) int {
 		return 2
 	}
 
-	table := tablewriter.NewWriter(os.Stdout)
+	table := tablewriter.NewColorWriter(os.Stdout)
 	table.SetHeader([]string{"站序", "站名", "到站时间", "出站时间", "停留时间"})
 
 	if m, ok := v.(map[string]interface{}); ok {
@@ -267,7 +267,7 @@ func ShowLeftTrcket(cmd *Command, args []string) int {
 	}
 
 	// new table redict to terminal
-	table := tablewriter.NewWriter(os.Stdout)
+	table := tablewriter.NewColorWriter(os.Stdout)
 	table.SetHeader([]string{"车次", "出发站", "到达站", "出发时间", "到达时间", "历时", "商务座", "特等座", "一等座", "二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他"})
 	if m, ok := v.(map[string]interface{}); ok {
 		if m["httpstatus"].(float64) == 200 {
