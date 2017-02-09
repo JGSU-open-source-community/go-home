@@ -68,7 +68,7 @@ var (
 		UsageLine: "train",
 	}
 
-	cmdLeftTricket = &Command{
+	cmdLeftTicket = &Command{
 		UsageLine: "left",
 	}
 
@@ -77,7 +77,7 @@ var (
 	}
 
 	Commands = []*Command{
-		cmdLeftTricket,
+		cmdLeftTicket,
 		cmdSchedule,
 		cmdUpdate,
 	}
@@ -99,10 +99,10 @@ func init() {
 	cmdSchedule.Flag.StringVar(&Train, "train", "", "the train number is your will seat")
 	cmdSchedule.Flag.StringVar(&Date1, "date1", "", "special depart date when you query train schedule")
 
-	cmdLeftTricket.Run = ShowLeftTrcket
-	cmdLeftTricket.Flag.StringVar(&Date2, "date2", "", "special depart date when you query left tricket")
-	cmdLeftTricket.Flag.StringVar(&To, "to", "", "arrive station")
-	cmdLeftTricket.Flag.StringVar(&From, "from", "", "start station")
+	cmdLeftTicket.Run = ShowLeftTicket
+	cmdLeftTicket.Flag.StringVar(&Date2, "date2", "", "special depart date when you query left ticket")
+	cmdLeftTicket.Flag.StringVar(&To, "to", "", "arrive station")
+	cmdLeftTicket.Flag.StringVar(&From, "from", "", "start station")
 
 	cmdUpdate.Run = TrainList
 	cmdUpdate.Flag.StringVar(&Update, "update", "", "update basic data")
@@ -256,7 +256,7 @@ func leftTicket(from, to, date string) []byte {
 	return body
 }
 
-func ShowLeftTrcket(cmd *Command, args []string) int {
+func ShowLeftTicket(cmd *Command, args []string) int {
 	leftTicketDatas := leftTicket(args[0], args[1], args[2])
 
 	var v interface{}
