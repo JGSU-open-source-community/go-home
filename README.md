@@ -33,6 +33,7 @@ In fact you should use a command like **go-home train k502 2017-01-27** to query
 2. Support query left tricket go througth api of 12306 
 3. Support user update local data by "update" option
 4. Support go get
+5. Support both ansi in window console and cygwinn&&mysys terminal 
 
 ###Contact
 
