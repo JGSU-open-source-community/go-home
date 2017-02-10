@@ -223,7 +223,7 @@ func leftTicket(from, to, date string) []byte {
 
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
-	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
+	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
 
 	client := newClient()
 
