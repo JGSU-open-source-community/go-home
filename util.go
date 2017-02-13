@@ -37,7 +37,7 @@ func compare(t1, t2 string) bool {
 
 // 根据经纬度计算两地距离
 func earthDistance(lat1, lng1, lat2, lng2 float64) float64 {
-	radius := 6371000 // 6378137
+	var radius float64 = 6371000 // 6378137
 	rad := math.Pi / 180.0
 
 	lat1 = lat1 * rad
