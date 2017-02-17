@@ -42,3 +42,5 @@ Wechat: convertxy
 QQ: 2698380951
 
 Email: aliasliyu4@gamil.com
+
+[![Sourcegraph](https://sourcegraph.com/github.com/JingDa-open-source-community/go-home/-/badge.svg)](https://sourcegraph.com/github.com/JingDa-open-source-community/go-home?badge)
