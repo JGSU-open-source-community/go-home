@@ -223,7 +223,7 @@ func leftTicket(from, to, date string) []byte {
 
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
-	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
+	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
 
 	client := newClient()
 
@@ -260,6 +260,10 @@ func ShowLeftTicket(cmd *Command, args []string) int {
 	table := tablewriter.NewColorWriter(os.Stdout)
 	table.SetHeader([]string{"车次", "出发站", "到达站", "出发时间", "到达时间", "历时", "商务座", "特等座", "一等座", "二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他"})
 	if m, ok := v.(map[string]interface{}); ok {
+		if m["status"].(bool) != true {
+			fmt.Println("12306接口访问异常")
+			return 2
+		}
 		if m["httpstatus"].(float64) == 200 {
 			if data, ok := m["data"].([]interface{}); ok {
 				for _, queryLeftNewDTO := range data {
