@@ -102,7 +102,7 @@ func init() {
 	cmdUpdate.Flag.StringVar(&Update, "update", "", "update basic data")
 }
 
-var cityMapToCode = Stations(stationName())
+var cityMapToCode = stations(stationName())
 
 func schedule(train, date string) (datas []byte) {
 
