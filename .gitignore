@@ -11,7 +11,6 @@
 lastupdate.tmp
 logs/
 controllers/test
-app.conf
 
 # Folders
 _obj
