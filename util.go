@@ -25,12 +25,12 @@ func stations(stationTetx []byte) map[string]string {
 	return cityMap2Code
 }
 
-func allChinaRailyStations(stationTetx []byte) []string {
+func allChinaRailwayStations(stationTetx []byte) []string {
 	comp, _ := regexp.Compile("([\u4e00-\u9fa5]+)")
 
 	datas := comp.FindAll(stationTetx, -1)
 
-	crs := make([]string, 3000)
+	crs := make([]string, 0, len(datas))
 	for _, v := range datas {
 		crs = append(crs, string(v))
 	}

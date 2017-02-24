@@ -5,6 +5,7 @@ import (
 )
 
 func main() {
+	latitudeAndLongitude()
 	commands := Commands
 	args := os.Args
 

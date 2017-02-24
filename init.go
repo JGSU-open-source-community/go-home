@@ -30,7 +30,7 @@ func init() {
 	port = conf.String("port")
 	databaseName = conf.String("databaseName")
 
-	dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/?charset=utf8", user, password, host, port)
+	dns = fmt.Sprintf("%s:%s@tcp(%s:%s)/%s?charset=utf8", user, password, host, port, databaseName)
 
 	// auto create database
 	createDb()

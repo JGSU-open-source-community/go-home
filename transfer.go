@@ -16,7 +16,7 @@ import ()
 
   表内节点
   --------------------------------------------------
- | 站码 | 里程 | 线码| 同站的下一车次 | 同一车次的下一个站|
+ | 站码 | 里程 | 线码| 同站的下一车次 | 同一车次的下一个站 |
   --------------------------------------------------
 */
 
@@ -28,7 +28,7 @@ type TableHeader struct {
 type Header struct {
 	trainCode string
 	info      string
-	next      *TableHeader
+	next      *Header
 }
 
 type Node struct {
