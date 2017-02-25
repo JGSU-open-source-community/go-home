@@ -6,7 +6,6 @@
 ###output(train schedule)
 ![](http://p1.bqimg.com/567571/21b3d09e27e01ec1.gif)
 
-
 ###output(left tricket)
 ![](http://p1.bpimg.com/567571/bd4a89e17aa0bde0.gif)
 
