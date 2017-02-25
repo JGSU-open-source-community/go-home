@@ -98,5 +98,5 @@ Wechat: convertxy
 
 QQ: 2698380951
 
-Email: aliasliyu4@gamil.com
+Email: aliasliyu4@gmail.com
 
