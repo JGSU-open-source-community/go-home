@@ -9,8 +9,8 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"os/exec"
-	"runtime"
+	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/liyu4/tablewriter"
@@ -23,12 +23,31 @@ const (
 	newpath = "/src/github.com/JingDa-open-source-community"
 )
 
+var top = 10
+
 type Command struct {
 	UsageLine string
 	Run       func(cmd *Command, args []string) int
 
 	// Flag is a set of flags specific to this command.
 	Flag flag.FlagSet
+}
+
+type info struct {
+	City     string
+	Distance float64
+}
+
+type newList []*info
+
+func (I newList) Len() int {
+	return len(I)
+}
+func (I newList) Less(i, j int) bool {
+	return I[i].Distance < I[j].Distance
+}
+func (I newList) Swap(i, j int) {
+	I[i], I[j] = I[j], I[i]
 }
 
 func newClient() *http.Client {
@@ -93,7 +112,7 @@ func init() {
 	cmdSchedule.Flag.StringVar(&Train, "train", "", "the train number is your will seat")
 	cmdSchedule.Flag.StringVar(&Date1, "date1", "", "special depart date when you query train schedule")
 
-	cmdLeftTicket.Run = ShowLeftTicket
+	cmdLeftTicket.Run = ShowTransferPlan
 	cmdLeftTicket.Flag.StringVar(&Date2, "date2", "", "special depart date when you query left ticket")
 	cmdLeftTicket.Flag.StringVar(&To, "to", "", "arrive station")
 	cmdLeftTicket.Flag.StringVar(&From, "from", "", "start station")
@@ -104,72 +123,148 @@ func init() {
 
 var cityMapToCode = stations(stationName())
 
-func schedule(train, date string) (datas []byte) {
+func shortestcity(from, to, date string) *newList {
+	sql := `select station, latitude, longitude from  station_lat_lgt where station in (select distinct home from train_list where there like '%` + from + `%' and depart_date='` + date + `')`
 
-	train = strings.ToUpper(train)
-
-	client := newClient()
-
-	var v interface{}
-
-	execFileRelativePath, _ := exec.LookPath(os.Args[0])
-
-	var newexecFileRelativePath string
-
-	if runtime.GOOS == "windows" {
-		execFileRelativePath = strings.TrimSuffix(execFileRelativePath, ".exe")
-		newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", newpath, 1)
-		newexecFileRelativePath = newexecFileRelativePath + "\\compress.data"
-	} else {
-
-		if !strings.Contains(execFileRelativePath, "./") {
-			newexecFileRelativePath = strings.Replace(execFileRelativePath, "bin", newpath, 1)
-			newexecFileRelativePath = newexecFileRelativePath + "/compress.data"
-		} else {
-			newexecFileRelativePath = "compress.data"
-		}
-
-	}
-
-	f, err := ioutil.ReadFile(newexecFileRelativePath)
+	maps, err := query(sql)
 
 	if err != nil {
 		log.Fatal(err)
 		os.Exit(2)
 	}
 
-	if err := json.Unmarshal(f, &v); err != nil {
+	l := new(newList)
+	for _, v := range *maps {
+		station := v["station"].(string)
+		latitude, _ := strconv.ParseFloat(v["latitude"].(string), 64)
+		longitude, _ := strconv.ParseFloat(v["longitude"].(string), 64)
+		dis := earthDistance(29.0200802067, 115.8154807999, latitude, longitude)
+
+		info := &info{
+			City:     station,
+			Distance: dis,
+		}
+		*l = append(*l, info)
+	}
+
+	sort.Sort(newList(*l))
+	return l
+}
+
+func ShowTransferPlan(cmd *Command, args []string) int {
+
+	ret, err := isThrougt(args[0], args[1], args[2])
+
+	if ret {
+		// through from start station to your hometown
+		return ShowLeftTicket(cmd, args)
+	} else {
+		if err != nil {
+			log.Fatal(err)
+			return 2
+		}
+	}
+
+	// Can't go through
+	l := shortestcity(args[0], args[1], args[2])
+
+	ch := make(chan string, 1)
+	for i := 0; i < top; i++ {
+		// revsert query
+		if *l == nil {
+			l = shortestcity(args[1], args[0], args[2])
+			for i := 0; i < top; i++ {
+				if *l != nil {
+					topCity := (*l)[i].City
+					ret, err := isThrougt(topCity, args[0], args[2])
+					if err != nil {
+						log.Fatal(err)
+					}
+
+					if ret {
+						ch <- topCity
+						break
+					}
+				}
+			}
+			break
+		} else {
+			topCity := (*l)[i].City
+			ret, err := isThrougt(topCity, args[1], args[2])
+			if err != nil {
+				log.Fatal(err)
+			}
+
+			if ret {
+				ch <- topCity
+				break
+			}
+		}
+	}
+
+	city := <-ch
+	args1 := []string{args[0], city, args[2]}
+	fmt.Printf("===================到达中转站-%s=======================\n", city)
+	ShowLeftTicket(cmd, args1)
+	args2 := []string{city, args[1], args[2]}
+	fmt.Printf("===================中转站出发-%s=======================\n", city)
+	ShowLeftTicket(cmd, args2)
+	return 1
+}
+
+func isThrougt(from, to, date string) (bool, error) {
+	data := leftTicket(from, to, date)
+	var v interface{}
+	if err := json.Unmarshal(data, &v); err != nil {
+		return false, err
+	}
+
+	if m, ok := v.(map[string]interface{}); ok {
+		// in interface nil maybe not equal nil
+		if len(m["data"].([]interface{})) == 0 {
+			return false, nil
+		}
+	}
+	return true, nil
+}
+
+func schedule(train, date string) (datas []byte) {
+
+	train = strings.ToUpper(train)
+
+	sql := `select train_no, there, home from ` + train_list + ` where depart_date='` + date + `' and code='` + train + `'`
+	maps, err := query(sql)
+	if err != nil {
 		log.Fatal(err)
 		os.Exit(2)
 	}
+	client := newClient()
 
-	first := v.(map[string]interface{})
-	compress := first[date].(map[string]interface{})
-
-	if combain, ok := compress[train].(map[string]interface{}); !ok {
-		fmt.Println("请输入正确的车次信息！")
+	if *maps == nil {
+		fmt.Println("请输入正确的车次信息或者出发日期!")
 		return nil
 	} else {
-		no := combain["Train_no"].(string)
-		from := cityMapToCode[combain["From"].(string)]
-		to := cityMapToCode[combain["To"].(string)]
+		for _, v := range *maps {
+			no := v["train_no"].(string)
+			there := cityMapToCode[v["there"].(string)]
+			home := cityMapToCode[v["home"].(string)]
+			url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, there, home, date)
 
-		url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, from, to, date)
+			resp, err := client.Get(url)
 
-		resp, err := client.Get(url)
+			if err != nil {
+				log.Fatal(err)
+				os.Exit(2)
+			}
 
-		if err != nil {
-			log.Fatal(err)
-			os.Exit(2)
-		}
+			defer resp.Body.Close()
 
-		defer resp.Body.Close()
+			datas, err = ioutil.ReadAll(resp.Body)
 
-		datas, err = ioutil.ReadAll(resp.Body)
-
-		if err != nil {
-			log.Fatal(err)
-			os.Exit(2)
+			if err != nil {
+				log.Fatal(err)
+				os.Exit(2)
+			}
 		}
 	}
 	return datas
@@ -224,7 +319,6 @@ func leftTicket(from, to, date string) []byte {
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
 	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
-
 	client := newClient()
 
 	resp, err := client.Get(url)
@@ -255,7 +349,10 @@ func ShowLeftTicket(cmd *Command, args []string) int {
 		log.Fatal(err)
 		return 2
 	}
+	return readerTable(v)
+}
 
+func readerTable(v interface{}) int {
 	// new table redict to terminal
 	table := tablewriter.NewColorWriter(os.Stdout)
 	table.SetHeader([]string{"车次", "出发站", "到达站", "出发时间", "到达时间", "历时", "商务座", "特等座", "一等座", "二等座", "高级软卧", "软卧", "硬卧", "软座", "硬座", "无座", "其他"})
