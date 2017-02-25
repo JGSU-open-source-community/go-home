@@ -60,3 +60,22 @@ func insert(sql string) error {
 	}
 	return nil
 }
+
+func query(sql string) (*[]orm.Params, error) {
+	o := orm.NewOrm()
+
+	var maps []orm.Params
+	if _, err := o.Raw(sql).Values(&maps); err != nil {
+		return nil, err
+	}
+	return &maps, nil
+}
+
+func cleanOldData(tablename string) error {
+	o := orm.NewOrm()
+	sql := `truncate table ` + tablename + ``
+	if _, err := o.Raw(sql).Exec(); err != nil {
+		return err
+	}
+	return nil
+}
