@@ -13,7 +13,7 @@
 ![](http://i1.piimg.com/567571/ad64c6ff02bbca8b.gif)
 
 ###output(transfer query)
-![](http://i1.piimg.com/567571/4f55f20647262629.gif)
+![](http://p1.bpimg.com/567571/31c335fa203b16c8.gif)
 
 ###dependence
 1. ASCLL TABLE Writer it is for generate ascii table on termial
