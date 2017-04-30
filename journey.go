@@ -243,28 +243,28 @@ func schedule(train, date string) (datas []byte) {
 	if *maps == nil {
 		fmt.Println("请输入正确的车次信息或者出发日期!")
 		return nil
-	} else {
-		for _, v := range *maps {
-			no := v["train_no"].(string)
-			there := cityMapToCode[v["there"].(string)]
-			home := cityMapToCode[v["home"].(string)]
-			url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, there, home, date)
+	}
 
-			resp, err := client.Get(url)
+	for _, v := range *maps {
+		no := v["train_no"].(string)
+		there := cityMapToCode[v["there"].(string)]
+		home := cityMapToCode[v["home"].(string)]
+		url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, there, home, date)
 
-			if err != nil {
-				log.Fatal(err)
-				os.Exit(2)
-			}
+		resp, err := client.Get(url)
 
-			defer resp.Body.Close()
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(2)
+		}
 
-			datas, err = ioutil.ReadAll(resp.Body)
+		defer resp.Body.Close()
 
-			if err != nil {
-				log.Fatal(err)
-				os.Exit(2)
-			}
+		datas, err = ioutil.ReadAll(resp.Body)
+
+		if err != nil {
+			log.Fatal(err)
+			os.Exit(2)
 		}
 	}
 	return datas
