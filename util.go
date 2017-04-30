@@ -15,9 +15,9 @@ func FomatNowDate() string {
 func stations(stationTetx []byte) map[string]string {
 	comp, _ := regexp.Compile("([\u4e00-\u9fa5]+)\\|([A-Z]+)")
 
-	datas := comp.FindAll(stationTetx, -1)
+	data := comp.FindAll(stationTetx, -1)
 
-	cityMap2Code := make(map[string]string, len(datas))
+	cityMap2Code := make(map[string]string, len(data))
 	for _, v := range datas {
 		temp := strings.Split(string(v), "|")
 		cityMap2Code[temp[0]] = temp[1]
@@ -28,10 +28,10 @@ func stations(stationTetx []byte) map[string]string {
 func allChinaRailwayStations(stationTetx []byte) []string {
 	comp, _ := regexp.Compile("([\u4e00-\u9fa5]+)")
 
-	datas := comp.FindAll(stationTetx, -1)
+	data := comp.FindAll(stationTetx, -1)
 
-	crs := make([]string, 0, len(datas))
-	for _, v := range datas {
+	crs := make([]string, 0, len(data))
+	for _, v := range data {
 		crs = append(crs, string(v))
 	}
 	return crs

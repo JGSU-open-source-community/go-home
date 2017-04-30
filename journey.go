@@ -228,7 +228,7 @@ func isThrougt(from, to, date string) (bool, error) {
 	return true, nil
 }
 
-func schedule(train, date string) (datas []byte) {
+func schedule(train, date string) (data []byte) {
 
 	train = strings.ToUpper(train)
 
@@ -260,14 +260,14 @@ func schedule(train, date string) (datas []byte) {
 
 		defer resp.Body.Close()
 
-		datas, err = ioutil.ReadAll(resp.Body)
+		data, err = ioutil.ReadAll(resp.Body)
 
 		if err != nil {
 			log.Fatal(err)
 			os.Exit(2)
 		}
 	}
-	return datas
+	return data
 }
 
 func ShowSchedule(cmd *Command, args []string) int {
@@ -341,11 +341,11 @@ func leftTicket(from, to, date string) []byte {
 }
 
 func ShowLeftTicket(cmd *Command, args []string) int {
-	leftTicketDatas := leftTicket(args[0], args[1], args[2])
+	leftTicketData := leftTicket(args[0], args[1], args[2])
 
 	var v interface{}
 
-	if err := json.Unmarshal(leftTicketDatas, &v); err != nil {
+	if err := json.Unmarshal(leftTicketData, &v); err != nil {
 		log.Fatal(err)
 		return 2
 	}
