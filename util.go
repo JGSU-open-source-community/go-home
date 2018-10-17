@@ -18,7 +18,7 @@ func stations(stationTetx []byte) map[string]string {
 	data := comp.FindAll(stationTetx, -1)
 
 	cityMap2Code := make(map[string]string, len(data))
-	for _, v := range datas {
+	for _, v := range data {
 		temp := strings.Split(string(v), "|")
 		cityMap2Code[temp[0]] = temp[1]
 	}
