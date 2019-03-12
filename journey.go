@@ -221,7 +221,7 @@ func isThrougt(from, to, date string) (bool, error) {
 
 	if m, ok := v.(map[string]interface{}); ok {
 		// in interface nil maybe not equal nil
-		if len(m["data"].([]interface{})) == 0 {
+		if len(m["data"].(map[string]interface{})) == 0 {
 			return false, nil
 		}
 	}
@@ -250,7 +250,7 @@ func schedule(train, date string) (data []byte) {
 		there := cityMapToCode[v["there"].(string)]
 		home := cityMapToCode[v["home"].(string)]
 		url := fmt.Sprintf("https://kyfw.12306.cn/otn/czxx/queryByTrainNo?train_no=%s&from_station_telecode=%s&to_station_telecode=%s&depart_date=%s", no, there, home, date)
-
+		fmt.Println(url)
 		resp, err := client.Get(url)
 
 		if err != nil {
@@ -311,6 +311,97 @@ func ShowSchedule(cmd *Command, args []string) int {
 	return 1
 }
 
+
+func b4(ct []interface{}, cv map[string]interface{}) []interface{}{
+	var cs []interface{}
+
+	for cr := 0; cr < len(ct); cr=cr+1 {
+		//cw := make(map[string]interface{})
+
+		//var cq = ct[cr].split("|")
+		cq := strings.Split(ct[cr].(string), "|")
+
+		//cw.secretHBStr = cq[36]
+		//cw.secretStr = cq[0]
+		//cw.buttonTextInfo = cq[1]
+
+		cu := make(map[string]interface{})
+		cu["train_no"] = cq[2]
+		cu["station_train_code"] = cq[3]
+		cu["start_station_telecode"] = cq[4]
+		cu["end_station_telecode"] = cq[5]
+
+		if cv[cq[4]] == nil {
+			cu["start_station_name"] = " "
+		}else{
+			cu["start_station_name"] = cv[cq[4]]
+		}
+
+		if cv[cq[5]] == nil {
+			cu["end_station_name"] = " "
+		}else{
+			cu["end_station_name"] = cv[cq[5]]
+		}
+
+		cu["from_station_telecode"] = cq[6]
+		cu["to_station_telecode"] = cq[7]
+		cu["start_time"] = cq[8]
+		cu["arrive_time"] = cq[9]
+		cu["lishi"] = cq[10]
+		cu["canWebBuy"] = cq[11]
+		cu["yp_info"] = cq[12]
+		cu["start_train_date"] = cq[13]
+		cu["train_seat_feature"] = cq[14]
+		cu["location_code"] = cq[15]
+		cu["from_station_no"] = cq[16]
+		cu["to_station_no"] = cq[17]
+		cu["is_support_card"] = cq[18]
+		cu["controlled_train_flag"] = cq[19]
+		//cu["gg_num"] = len(cq[20])!=0 ? cq[20] : "--"
+		//cu["gr_num"] = len(cq[21])!=0 ? cq[21] : "--"
+		//cu["qt_num"] = len(cq[22])!=0 ? cq[22] : "--"
+		//cu["rw_num"] = len(cq[23])!=0 ? cq[23] : "--"
+		//cu["rz_num"] = len(cq[24])!=0 ? cq[24] : "--"
+		//cu["tz_num"] = len(cq[25])!=0 ? cq[25] : "--"
+		//cu["wz_num"] = len(cq[26])!=0 ? cq[26] : "--"
+		//cu["yb_num"] = len(cq[27])!=0 ? cq[27] : "--"
+		//cu["yw_num"] = len(cq[28])!=0 ? cq[28] : "--"
+		//cu["yz_num"] = len(cq[29])!=0 ? cq[29] : "--"
+		//cu["ze_num"] = len(cq[30])!=0 ? cq[30] : "--"
+		//cu["zy_num"] = len(cq[31])!=0 ? cq[31] : "--"
+		//cu["swz_num"] = len(cq[32])!=0 ? cq[32] : "--"
+		//cu["srrb_num"] = len(cq[33])!=0 ? cq[33] : "--"
+		cu["gg_num"] = cq[20]
+		cu["gr_num"] = cq[21]
+		cu["qt_num"] = cq[22]
+		cu["rw_num"] = cq[23]
+		cu["rz_num"] = cq[24]
+		cu["tz_num"] = cq[25]
+		cu["wz_num"] = cq[26]
+		cu["yb_num"] = cq[27]
+		cu["yw_num"] = cq[28]
+		cu["yz_num"] = cq[29]
+		cu["ze_num"] = cq[30]
+		cu["zy_num"] = cq[31]
+		cu["swz_num"] = cq[32]
+		cu["srrb_num"] = cq[33]
+		cu["yp_ex"] = cq[34]
+		cu["seat_types"] = cq[35]
+		cu["exchange_train_flag"] = cq[36]
+
+		cu["from_station_name"] = cv[cq[6]]
+		cu["to_station_name"] = cv[cq[7]]
+		//cu["from_station_name"] = cq[6]
+		//cu["to_station_name"] = cq[7]
+		//start_station_name
+
+		//cw.queryLeftNewDTO = cu
+		//cs.push(cw)
+		cs = append(cs, cu)
+	}
+	return cs
+}
+
 // query left ticket in 12306
 // form start city
 // to arrive city
@@ -318,8 +409,9 @@ func leftTicket(from, to, date string) []byte {
 
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
-	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/query?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
+	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/queryO?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
 	client := newClient()
+	fmt.Println(url)
 
 	resp, err := client.Get(url)
 
@@ -362,88 +454,94 @@ func readerTable(v interface{}) int {
 			return 2
 		}
 		if m["httpstatus"].(float64) == 200 {
-			if data, ok := m["data"].([]interface{}); ok {
-				for _, queryLeftNewDTO := range data {
-					if ql, ok := queryLeftNewDTO.(map[string]interface{}); ok {
-						raw := ql["queryLeftNewDTO"]
-						detail := raw.(map[string]interface{})
+			if data, ok := m["data"].(map[string]interface{}); ok {
+				if resdata, ok := data["result"].([]interface{}); ok {
+						mapcity, _ := data["map"].(map[string]interface{})
+						data2 := b4(resdata, mapcity)
+						for _, queryLeftNewDTO := range data2 {
+							if detail, ok := queryLeftNewDTO.(map[string]interface{}); ok {
+								//raw := ql["queryLeftNewDTO"]
+								//detail := raw.(map[string]interface{})
 
-						// 始发站
-						start_station_name := detail["start_station_name"].(string)
-						// 终点站
-						end_station_name := detail["end_station_name"].(string)
+								// 始发站
+								start_station_name := detail["start_station_name"].(string)
+								// 终点站
+								end_station_name := detail["end_station_name"].(string)
 
-						// 车次
-						station_train_code := detail["station_train_code"].(string)
-						// 出发站
-						from_station_name := detail["from_station_name"].(string)
+								// 车次
+								station_train_code := detail["station_train_code"].(string)
+								// 出发站
+								from_station_name := detail["from_station_name"].(string)
 
-						// 到达站
-						to_station_name := detail["to_station_name"].(string)
+								// 到达站
+								to_station_name := detail["to_station_name"].(string)
 
-						if start_station_name == from_station_name {
-							from_station_name = start + from_station_name
-						} else {
-							from_station_name = pass + from_station_name
+								if start_station_name == from_station_name {
+									from_station_name = start + from_station_name
+								} else {
+									from_station_name = pass + from_station_name
+								}
+
+								if end_station_name == to_station_name {
+									to_station_name = end + to_station_name
+								} else {
+									to_station_name = pass + to_station_name
+								}
+
+
+								// 出发时间
+								satrt_time := detail["start_time"].(string)
+								// 到达时间
+								arrive_time := detail["arrive_time"].(string)
+								// 历时
+								lishi := detail["lishi"].(string)
+								// 商务座
+								swz_nun := detail["swz_num"].(string)
+								// 特等座
+								tz_num := detail["tz_num"].(string)
+								// 一等座
+								zy_num := detail["zy_num"].(string)
+								// 二等座
+								ze_num := detail["ze_num"].(string)
+								// 高级软卧
+								gr_num := detail["gr_num"].(string)
+								// 软卧
+								rw_num := detail["rw_num"].(string)
+								// 硬卧
+								yw_num := detail["yw_num"].(string)
+								// 软座
+								rz_num := detail["rz_num"].(string)
+								// 硬座
+								yz_num := detail["yz_num"].(string)
+								// 无座
+								wz_num := detail["wz_num"].(string)
+								// 其他
+								qt_num := detail["qt_num"].(string)
+
+								row := []string{
+									station_train_code,
+									from_station_name,
+									to_station_name,
+									satrt_time,
+									arrive_time,
+									lishi,
+									swz_nun,
+									tz_num,
+									zy_num,
+									ze_num,
+									gr_num,
+									rw_num,
+									yw_num,
+									rz_num,
+									yz_num,
+									wz_num,
+									qt_num,
+								}
+								table.Append(row)
+							}
 						}
-
-						if end_station_name == to_station_name {
-							to_station_name = end + to_station_name
-						} else {
-							to_station_name = pass + to_station_name
-						}
-
-						// 出发时间
-						satrt_time := detail["start_time"].(string)
-						// 到达时间
-						arrive_time := detail["arrive_time"].(string)
-						// 历时
-						lishi := detail["lishi"].(string)
-						// 商务座
-						swz_nun := detail["swz_num"].(string)
-						// 特等座
-						tz_num := detail["tz_num"].(string)
-						// 一等座
-						zy_num := detail["zy_num"].(string)
-						// 二等座
-						ze_num := detail["ze_num"].(string)
-						// 高级软卧
-						gr_num := detail["gr_num"].(string)
-						// 软卧
-						rw_num := detail["rw_num"].(string)
-						// 硬卧
-						yw_num := detail["yw_num"].(string)
-						// 软座
-						rz_num := detail["rz_num"].(string)
-						// 硬座
-						yz_num := detail["yz_num"].(string)
-						// 无座
-						wz_num := detail["wz_num"].(string)
-						// 其他
-						qt_num := detail["qt_num"].(string)
-
-						row := []string{
-							station_train_code,
-							from_station_name,
-							to_station_name,
-							satrt_time,
-							arrive_time,
-							lishi,
-							swz_nun,
-							tz_num,
-							zy_num,
-							ze_num,
-							gr_num,
-							rw_num,
-							yw_num,
-							rz_num,
-							yz_num,
-							wz_num,
-							qt_num,
-						}
-						table.Append(row)
-					}
 				}
+
 			}
 		} else {
 			log.Fatal("invalid left tricket message!")
