@@ -311,11 +311,10 @@ func ShowSchedule(cmd *Command, args []string) int {
 	return 1
 }
 
-
-func b4(ct []interface{}, cv map[string]interface{}) []interface{}{
+func b4(ct []interface{}, cv map[string]interface{}) []interface{} {
 	var cs []interface{}
 
-	for cr := 0; cr < len(ct); cr=cr+1 {
+	for cr := 0; cr < len(ct); cr = cr + 1 {
 		//cw := make(map[string]interface{})
 
 		//var cq = ct[cr].split("|")
@@ -333,13 +332,13 @@ func b4(ct []interface{}, cv map[string]interface{}) []interface{}{
 
 		if cv[cq[4]] == nil {
 			cu["start_station_name"] = " "
-		}else{
+		} else {
 			cu["start_station_name"] = cv[cq[4]]
 		}
 
 		if cv[cq[5]] == nil {
 			cu["end_station_name"] = " "
-		}else{
+		} else {
 			cu["end_station_name"] = cv[cq[5]]
 		}
 
@@ -409,7 +408,7 @@ func leftTicket(from, to, date string) []byte {
 
 	fromCode := cityMapToCode[from]
 	toCode := cityMapToCode[to]
-	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/queryO?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
+	url := fmt.Sprintf("https://kyfw.12306.cn/otn/leftTicket/queryX?leftTicketDTO.train_date=%s&leftTicketDTO.from_station=%s&leftTicketDTO.to_station=%s&purpose_codes=ADULT", date, fromCode, toCode)
 	client := newClient()
 	fmt.Println(url)
 
@@ -456,90 +455,89 @@ func readerTable(v interface{}) int {
 		if m["httpstatus"].(float64) == 200 {
 			if data, ok := m["data"].(map[string]interface{}); ok {
 				if resdata, ok := data["result"].([]interface{}); ok {
-						mapcity, _ := data["map"].(map[string]interface{})
-						data2 := b4(resdata, mapcity)
-						for _, queryLeftNewDTO := range data2 {
-							if detail, ok := queryLeftNewDTO.(map[string]interface{}); ok {
-								//raw := ql["queryLeftNewDTO"]
-								//detail := raw.(map[string]interface{})
+					mapcity, _ := data["map"].(map[string]interface{})
+					data2 := b4(resdata, mapcity)
+					for _, queryLeftNewDTO := range data2 {
+						if detail, ok := queryLeftNewDTO.(map[string]interface{}); ok {
+							//raw := ql["queryLeftNewDTO"]
+							//detail := raw.(map[string]interface{})
 
-								// 始发站
-								start_station_name := detail["start_station_name"].(string)
-								// 终点站
-								end_station_name := detail["end_station_name"].(string)
+							// 始发站
+							start_station_name := detail["start_station_name"].(string)
+							// 终点站
+							end_station_name := detail["end_station_name"].(string)
 
-								// 车次
-								station_train_code := detail["station_train_code"].(string)
-								// 出发站
-								from_station_name := detail["from_station_name"].(string)
+							// 车次
+							station_train_code := detail["station_train_code"].(string)
+							// 出发站
+							from_station_name := detail["from_station_name"].(string)
 
-								// 到达站
-								to_station_name := detail["to_station_name"].(string)
+							// 到达站
+							to_station_name := detail["to_station_name"].(string)
 
-								if start_station_name == from_station_name {
-									from_station_name = start + from_station_name
-								} else {
-									from_station_name = pass + from_station_name
-								}
-
-								if end_station_name == to_station_name {
-									to_station_name = end + to_station_name
-								} else {
-									to_station_name = pass + to_station_name
-								}
-
-
-								// 出发时间
-								satrt_time := detail["start_time"].(string)
-								// 到达时间
-								arrive_time := detail["arrive_time"].(string)
-								// 历时
-								lishi := detail["lishi"].(string)
-								// 商务座
-								swz_nun := detail["swz_num"].(string)
-								// 特等座
-								tz_num := detail["tz_num"].(string)
-								// 一等座
-								zy_num := detail["zy_num"].(string)
-								// 二等座
-								ze_num := detail["ze_num"].(string)
-								// 高级软卧
-								gr_num := detail["gr_num"].(string)
-								// 软卧
-								rw_num := detail["rw_num"].(string)
-								// 硬卧
-								yw_num := detail["yw_num"].(string)
-								// 软座
-								rz_num := detail["rz_num"].(string)
-								// 硬座
-								yz_num := detail["yz_num"].(string)
-								// 无座
-								wz_num := detail["wz_num"].(string)
-								// 其他
-								qt_num := detail["qt_num"].(string)
-
-								row := []string{
-									station_train_code,
-									from_station_name,
-									to_station_name,
-									satrt_time,
-									arrive_time,
-									lishi,
-									swz_nun,
-									tz_num,
-									zy_num,
-									ze_num,
-									gr_num,
-									rw_num,
-									yw_num,
-									rz_num,
-									yz_num,
-									wz_num,
-									qt_num,
-								}
-								table.Append(row)
+							if start_station_name == from_station_name {
+								from_station_name = start + from_station_name
+							} else {
+								from_station_name = pass + from_station_name
 							}
+
+							if end_station_name == to_station_name {
+								to_station_name = end + to_station_name
+							} else {
+								to_station_name = pass + to_station_name
+							}
+
+							// 出发时间
+							satrt_time := detail["start_time"].(string)
+							// 到达时间
+							arrive_time := detail["arrive_time"].(string)
+							// 历时
+							lishi := detail["lishi"].(string)
+							// 商务座
+							swz_nun := detail["swz_num"].(string)
+							// 特等座
+							tz_num := detail["tz_num"].(string)
+							// 一等座
+							zy_num := detail["zy_num"].(string)
+							// 二等座
+							ze_num := detail["ze_num"].(string)
+							// 高级软卧
+							gr_num := detail["gr_num"].(string)
+							// 软卧
+							rw_num := detail["rw_num"].(string)
+							// 硬卧
+							yw_num := detail["yw_num"].(string)
+							// 软座
+							rz_num := detail["rz_num"].(string)
+							// 硬座
+							yz_num := detail["yz_num"].(string)
+							// 无座
+							wz_num := detail["wz_num"].(string)
+							// 其他
+							qt_num := detail["qt_num"].(string)
+
+							row := []string{
+								station_train_code,
+								from_station_name,
+								to_station_name,
+								satrt_time,
+								arrive_time,
+								lishi,
+								swz_nun,
+								tz_num,
+								zy_num,
+								ze_num,
+								gr_num,
+								rw_num,
+								yw_num,
+								rz_num,
+								yz_num,
+								wz_num,
+								qt_num,
+							}
+							table.Append(row)
 						}
+					}
 				}
 
 			}
